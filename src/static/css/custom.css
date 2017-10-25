@@ -73,7 +73,7 @@ body {
 .selectbox > select,
 .selectbox > div > select {
     height: 40px;
-    width: 250px;
+    width: 130px;
     border:1px solid #979797;
     border-radius: 5px;
     font-size:13px;
@@ -84,11 +84,11 @@ body {
 
 .selectbox > select,
 .selectbox > div > select {
-    width: 200px;
+    width: 130px;
 }
 
 .custom-inputbox > input {
-    width: 150px !important;
+    width: 130px !important;
 }
 
 .seq-inputbox > input {
@@ -98,7 +98,7 @@ body {
 
 .textarea textarea{
     height: 5vw;
-    width: 250px;
+    width: 150px;
     border-radius: 5px;
     background-color: #ffffff;
     border: solid 1px #979797;

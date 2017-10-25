@@ -3,6 +3,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
+from django.conf import settings
+
 
 
 class Project(models.Model):
@@ -77,6 +79,7 @@ class Action(models.Model):
     locators = models.CharField(blank=True, max_length=255)
     element_identifier = models.CharField(max_length=1024, blank=True)
     element_value = models.CharField(max_length=1024, blank=True)
+    upload_files = models.CharField(max_length=255, blank=True)
 
     class Meta:
         """Meta Data."""
@@ -94,3 +97,9 @@ class Reports(models.Model):
     use_case = models.ForeignKey(UseCase)
     time = models.CharField(max_length=500, blank=True)
     report = models.TextField()
+
+
+class Document(models.Model):
+    """Document model class."""
+
+    document = models.FileField(upload_to='Document/', blank=True, null=True)

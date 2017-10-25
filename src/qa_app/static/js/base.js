@@ -27,6 +27,13 @@ $(document).ready(function(){
         var browser = $('#id_browser_jobs').find(":selected").val();
         $(this).attr('href', $(this).attr('href').split('&')[0] + '&' + browser);
     });
+    $('.action_class').on('change', function (e) {
+        hide_show_dropdwon(this, 'UPLOADFILES')
+    });
+    $('#sortable_actions .actions-formset').each(function () {
+        hide_show_dropdwon($(this).find('.action_class'), 'UPLOADFILES')
+    })
+
 
     $(document).on('click', '#id_run_multiple_ucs', function(){
         var id_list = [];
@@ -158,5 +165,15 @@ function rearrageSequenceNumbers(ele, parentClass) {
                 }
             })
         }
+    }
+}
+
+function hide_show_dropdwon(dropdown_id, value_check){
+    if($(dropdown_id).val() === value_check){
+       $(dropdown_id).closest('.actions-formset').find('.upload-files-class').show()
+
+    } else{
+         $(dropdown_id).closest('.actions-formset').find('.upload-files-class').hide()
+            $(dropdown_id).closest('.actions-formset').find('.upload-files-class').val('')
     }
 }
