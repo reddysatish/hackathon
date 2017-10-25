@@ -21,6 +21,7 @@ environ.Env.read_env()  # reading .env file
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -58,11 +59,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'hakuna_matata.urls'
 REPORT_FOLDER_PATH = env('REPORTS_PATH', default='/home/vagrant/reports')
+FILE_UPLOAD_FOLDER_PATH = env('FILE_UPLOAD_PATH', default='/home/vagrant/Document/')
+MEDIA_ROOT = env('MEDIA_UPLOAD_PATH', default='/home/vagrant/')
+
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates"), REPORT_FOLDER_PATH, ],
+        'DIRS': [os.path.join(BASE_DIR, "templates"), REPORT_FOLDER_PATH, FILE_UPLOAD_FOLDER_PATH],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,24 +77,30 @@ TEMPLATES = [
             ],
 
         },
-
     },
 ]
 
+#  DATABASES = {
+#      'default': {
+# 'ENGINE': 'django.db.backends.postgresql_psycopg2',
+# 'NAME': env('DB_NAME', default='local_db'),
+# 'USER': env('DB_USERNAME', default='local_user'),
+# 'PASSWORD': env('DB_PASSWORD', default='local_password'),
+# 'HOST': env('DB_HOST', default='localhost'),
+# 'PORT': env('DB_PORT', default='5432'),
+# +        'ENGINE': 'django.db.backends.sqlite3',
+# +        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#      },
+#  }
 WSGI_APPLICATION = 'hakuna_matata.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env('DB_NAME', default='local_db'),
-        'USER': env('DB_USERNAME', default='local_user'),
-        'PASSWORD': env('DB_PASSWORD', default='local_password'),
-        'HOST': env('DB_HOST', default='localhost'),
-        'PORT': env('DB_PORT', default='5432'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     },
 }
 

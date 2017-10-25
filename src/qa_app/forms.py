@@ -1,9 +1,13 @@
 """Forms.py file."""
 
 from django import forms
-from .models import Action, UseCase, Project, Jobs
+from .models import Action, UseCase, Project, Jobs, Document
+import os
+from django.conf import settings
+
 
 DEFAULT_OPTION = [["", "Select an option"]]
+
 
 ACTION_CHOICES = [
     ["Click", "Click"],
@@ -19,6 +23,7 @@ ACTION_CHOICES = [
     ["NAVIGATEBACK", "Navigate Back"],
     ["HOVERON", "Hoveron"],
     ["ENTERDYNAMICTEXT", "Enter Dynamic Text"],
+<<<<<<< Updated upstream
     ["CLEARTEXT","Clear Text"],
     ["GETTEXT","Get Text"],
     ["CLICKONENTER","Click on Enter"],
@@ -30,7 +35,7 @@ ACTION_CHOICES = [
     ["VERIFYALL","Verify All"],
     ["VERIFYCHECKBOX","Verify Checkbox"],
     ["ISEMPTY", "Is Empty"],
-
+    ["UPLOADFILES", "Upload the files"]
 ]
 
 LOCATORS_CHOICES = [
@@ -50,14 +55,19 @@ class ActionsFormset(forms.ModelForm):
 
     hidden_id = forms.CharField(required=False, widget=forms.HiddenInput())
     seq = forms.IntegerField(required=False, widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    action = forms.ChoiceField(choices=ACTION_CHOICES, required=False)
+    action = forms.ChoiceField(choices=DEFAULT_OPTION + ACTION_CHOICES, required=False, widget=forms.Select(attrs={'class': 'action_class'}))
     locators = forms.ChoiceField(choices=DEFAULT_OPTION + LOCATORS_CHOICES, required=False)
+    upload_files = forms.ChoiceField(required=False, widget=forms.Select(attrs={'class': 'upload-files-class'}))
 
     class Meta:
         """Meta Data."""
 
         model = Action
-        fields = ['seq', 'description', 'action', 'locators', 'element_identifier', 'element_value']
+        fields = ['seq', 'description', 'action', 'locators', 'element_identifier', 'element_value', 'upload_files']
+
+    def __init__(self, files_choices=None, *args, **kwargs):
+        super(ActionsFormset, self).__init__(*args, **kwargs)
+        self.fields['upload_files'] = forms.ChoiceField(choices=files_choices, required=False, widget=forms.Select(attrs={'class': 'upload-files-class'}))
 
 
 class UsecaseForm(forms.ModelForm):
@@ -88,3 +98,13 @@ class JobsForm(forms.ModelForm):
 
         model = Jobs
         fields = ['name']
+
+
+class DocumentForm(forms.ModelForm):
+    """Upload form."""
+
+    class Meta:
+        """Meta Data."""
+
+        model = Document
+        fields = ['document']

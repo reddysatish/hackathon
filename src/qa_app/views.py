@@ -10,9 +10,10 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.forms import formset_factory
 from django.conf import settings
-from .models import Project, Reports, UseCase, Action, Jobs, JobUseCases
-from .forms import ActionsFormset, ProjectForm, UsecaseForm, JobsForm
+from .models import Project, Reports, UseCase, Action, Jobs, JobUseCases, Document
+from .forms import ActionsFormset, ProjectForm, UsecaseForm, JobsForm, DocumentForm
 from functools import partial, wraps
+import os
 
 
 def project_view(request):
@@ -72,6 +73,15 @@ def remove_project(request, project_id):
     remove_project = get_object_or_404(Project, pk=project_id)
     remove_project.delete()
     return HttpResponseRedirect(reverse_lazy('hakuna_matata:projects'))
+
+
+def upload_files_view(request, project_id, usecase_id):
+    """Upload the files."""
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+        return HttpResponseRedirect(reverse_lazy('hakuna_matata:actions', kwargs={'project_id': project_id, 'usecase_id': usecase_id}))
 
 
 def usecases_view(request, project_id):
@@ -239,12 +249,16 @@ def delete_job_view(request, project_id, job_id):
 
 def actions_view(request, project_id, usecase_id):
     """Action screen views."""
+    list_files = os.listdir(settings.FILE_UPLOAD_FOLDER_PATH)
+    files_choices = [[list_files[idx], list_files[idx]] for idx, i in enumerate(list_files)]
+    initial_data = []
     actions_prefix = 'actions-prefix'
     actions_formset = formset_factory(wraps(ActionsFormset)(partial(
-        ActionsFormset)),
+        ActionsFormset, files_choices=files_choices)),
         max_num=1000,
         extra=0,
         min_num=1
+
     )
 
     if request.method == 'GET':
@@ -259,18 +273,24 @@ def actions_view(request, project_id, usecase_id):
                 'locators': obj.locators,
                 'element_identifier': obj.element_identifier,
                 'element_value': obj.element_value,
+                'upload_files': obj.upload_files,
             })
+
         if not initial_data:
             initial_data = [{'seq': 1}]
         actions_form = actions_formset(initial=initial_data, prefix=actions_prefix)
+        initial_files = {'document': ''}
+        documentform = DocumentForm(initial=initial_files)
         context = {
             'project_id': project_id,
             'usecase_id': usecase_id,
             'usecase_name': UseCase.objects.get(id=usecase_id).use_case_name,
             'actions_form': actions_form,
+            'documentform': documentform,
         }
         return render(request, 'usecase_actions.html', context)
     elif request.method == 'POST':
+
         for action_id in request.POST.get('deleted_actions', '').strip(';').split(';'):
             if action_id:
                 try:
@@ -292,6 +312,7 @@ def actions_view(request, project_id, usecase_id):
                         action_obj.locators = action['locators']
                         action_obj.element_identifier = action['element_identifier']
                         action_obj.element_value = action['element_value']
+                        action_obj.upload_files = action['upload_files']
                         action_obj.save()
                     else:
                         action_obj = Action.objects.filter(id=int(action['hidden_id']))
@@ -302,5 +323,7 @@ def actions_view(request, project_id, usecase_id):
                             locators=action['locators'],
                             element_identifier=action['element_identifier'],
                             element_value=action['element_value'],
+                            upload_files=action['upload_files'],
                         )
+
         return HttpResponseRedirect(reverse_lazy('hakuna_matata:actions', kwargs={'project_id': project_id, 'usecase_id': usecase_id}))

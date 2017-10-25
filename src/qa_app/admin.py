@@ -4,7 +4,7 @@
 from __future__ import unicode_literals
 
 from django.contrib import admin
-from .models import Project, UseCase, Action, Reports, Jobs, JobUseCases
+from .models import Project, UseCase, Action, Reports, Jobs, JobUseCases, Document
 
 
 @admin.register(Project)
@@ -58,6 +58,13 @@ class ActionAdmin(admin.ModelAdmin):
 
 @admin.register(Reports)
 class ReportsAdmin(admin.ModelAdmin):
+    """Reports admin."""
+
+    pass
+
+
+@admin.register(Document)
+class DocumentAdmin(admin.ModelAdmin):
     """Reports admin."""
 
     pass
